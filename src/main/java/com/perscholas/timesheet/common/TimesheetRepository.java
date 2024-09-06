@@ -1,16 +1,14 @@
 package com.perscholas.timesheet.common;
 import jakarta.annotation.PostConstruct;
 import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.stereotype.Repository;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public class TimesheetRepository {
@@ -21,10 +19,11 @@ public class TimesheetRepository {
     public TimesheetRepository(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
     }
-    public List<Timesheet> findAll() {
-        return jdbcClient.sql("SELECT * FROM Timsheet").query(Timesheet.class).list();
+    public List<Timesheet> findAll(){
+        return jdbcClient.sql("SELECT * FROM Timesheet").query(Timesheet.class).list();
     }
-    public void create(Timsheet timesheet){
+    public void create(Timesheet timesheet){
+
         jdbcClient.sql("INSERT INTO timesheet (id, name, punchInTime, punchOutTime, hoursWorked, location, payRate) VALUES (?, ?, ?, ?, ?, ?, ?)")
                 .params(timesheet.id())
                 .params(timesheet.name())
@@ -35,9 +34,11 @@ public class TimesheetRepository {
                 .params(timesheet.payRate())
                 .update();
     }
+
     public void update(Timesheet timesheet, Integer id){
-        jdbcClient.sql("UPDATE timesheet SET name = :name," + "punchInTime = :punchInTime, punchOutTime = :punchOutTime, hoursWorked" +
-                "= :hoursWorked, location = :location, payRate = :payRate WHERE id = :id")
+        jdbcClient.sql("UPDATE timesheet SET name = :name," +
+                        " punchInTime = :punchInTime, punchOutTime = :punchOutTime, hoursWorked " +
+                        "= :hoursWorked, location = :location, payRate = :payRate WHERE id = :id")
                 .param("id", id)
                 .param("name", timesheet.name())
                 .param("punchInTime", timesheet.punchInTime())
@@ -47,19 +48,21 @@ public class TimesheetRepository {
                 .param("payRate", timesheet.payRate())
                 .update();
     }
+
     public void delete(Integer id){
         jdbcClient.sql("DELETE FROM timesheet WHERE id = :id")
                 .param("id", id)
                 .update();
     }
+
     public Optional<Timesheet> findByID(Integer id){
-        return jdbcClient.sql("SELECT * FROM timehseet WHERE id = : id")
-                .param("id", id)
+        return jdbcClient.sql("SELECT * FROM timesheet WHERE id = :id")
+                .param( "id", id)
                 .query(Timesheet.class)
                 .optional();
     }
-}
 
+}
 
 //private final List<Timesheet> timesheets = new ArrayList<>();
 //
